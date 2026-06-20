@@ -190,7 +190,7 @@ function SkillCard({
       <div
         ref={innerRef}
         className="skill glass"
-        data-cursor
+        data-cursor="drag"
         onMouseMove={onMove}
         onMouseLeave={onLeave}
         style={{ ["--accent" as string]: tech.color }}

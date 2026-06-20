@@ -115,6 +115,63 @@
   background: radial-gradient(circle, rgba(168, 85, 247, 0.18), transparent 70%);
 }
 .cursor-ring.is-down { transform: scale(0.8); }
+.cursor-dot.is-hidden,
+.cursor-ring.is-hidden { opacity: 0; }
+
+/* unique drag cursor shown over draggable skill cards */
+.cursor-drag {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  margin-left: -36px;
+  margin-top: -36px;
+  width: 72px; height: 72px;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.cursor-drag.is-on { opacity: 1; }
+/* rotating dashed ring */
+.cursor-drag::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(56, 189, 248, 0.85);
+  box-shadow: 0 0 24px rgba(56, 189, 248, 0.45), inset 0 0 16px rgba(56, 189, 248, 0.2);
+  animation: spinSlow 6s linear infinite;
+}
+/* soft inner glass disc */
+.cursor-drag::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.18), transparent 70%);
+  backdrop-filter: blur(2px);
+}
+.cursor-drag__icon {
+  position: relative;
+  width: 22px; height: 22px;
+  color: var(--ice);
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.8));
+  transition: transform 0.2s ease;
+}
+.cursor-drag__label {
+  position: absolute;
+  bottom: -14px;
+  font-family: var(--font-mono);
+  font-size: 0.52rem;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  color: var(--cyan);
+  text-shadow: 0 0 8px rgba(34, 211, 238, 0.7);
+}
+.cursor-drag.is-grab { opacity: 1; }
+.cursor-drag.is-grab .cursor-drag__icon { transform: scale(0.78); }
+.cursor-drag.is-grab::after { background: radial-gradient(circle, rgba(168, 85, 247, 0.28), transparent 70%); }
 
 /* ──────────────────────────────  PRELOADER  ───────────────────────────── */
 .preloader {
