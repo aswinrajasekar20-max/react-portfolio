@@ -24,11 +24,13 @@ function hostOf(url: string) {
 /** A single coverflow card; transform is derived from its distance to centre. */
 function Card({
   project,
+  num,
   pos,
   isActive,
   onClick,
 }: {
   project: Project;
+  num: number; // 1-based position in the gallery
   pos: number; // signed distance from the active card (fractional)
   isActive: boolean;
   onClick: () => void;
@@ -78,7 +80,7 @@ function Card({
           style={{ ["--c1" as string]: c1, ["--c2" as string]: c2 }}
         >
           <img className="pcard__img" src={project.image} alt={project.title} loading="lazy" />
-          <span className="pcard__no">{String(project.id).padStart(2, "0")}</span>
+          <span className="pcard__no">{String(num).padStart(2, "0")}</span>
           <span className="pcard__sheen" />
         </div>
       </div>
@@ -181,6 +183,7 @@ export function Projects() {
               <Card
                 key={p.id}
                 project={p}
+                num={i + 1}
                 pos={i - pos}
                 isActive={Math.abs(i - pos) < 0.5}
                 onClick={() => go(i)}
