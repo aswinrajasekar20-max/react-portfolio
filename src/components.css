@@ -915,7 +915,12 @@
 }
 .coverflow__counter i { font-style: normal; margin: 0 0.3rem; color: var(--cyan); }
 .pdetail { max-width: 620px; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
-.pdetail__title { font-size: clamp(1.6rem, 4vw, 2.4rem); }
+.pdetail__title {
+  font-family: var(--font-cursive);
+  font-weight: 700;
+  line-height: 1.15;
+  font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+}
 .pdetail__desc { color: var(--silver); opacity: 0.82; font-size: 0.95rem; line-height: 1.5; }
 .pdetail__tags { display: flex; flex-wrap: wrap; gap: 0.45rem; justify-content: center; }
 .pdetail__actions { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center; margin-top: 0.4rem; }
