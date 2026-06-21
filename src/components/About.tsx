@@ -1,11 +1,12 @@
 import { Reveal } from "./Reveal";
 import { defaultConfig } from "../data";
+import profileImg from "../assets/aswin-profile.webp";
 
 const FACTS = [
   { k: "Based in", v: "Chennai, India" },
-  { k: "Focus", v: "Full Stack Web" },
-  { k: "Learning at", v: "Freshworks STS" },
-  { k: "Origin", v: "Thoothukudi" },
+  { k: "Role", v: "Full Stack Developer" },
+  { k: "Education", v: "BBA Graduate" },
+  { k: "Trained at", v: "Freshworks STS" },
 ];
 
 export function About() {
@@ -40,25 +41,8 @@ export function About() {
         </div>
 
         <Reveal delay={0.1} className="about__aside">
-          <div className="about__card glass">
-            <div className="about__avatar">
-              <span>A</span>
-              <i className="about__avatar-glow" />
-            </div>
-            <h3 className="about__card-name">Aswin Rajasekar</h3>
-            <p className="about__card-role">Full Stack Developer</p>
-            <div className="about__quote">
-              “I build scalable, user-friendly applications — and obsess over
-              the details that make them feel effortless.”
-            </div>
-            <div className="about__links">
-              <a className="pill" href={defaultConfig.github_url} target="_blank" rel="noreferrer">
-                GitHub ↗
-              </a>
-              <a className="pill" href={defaultConfig.linkedin_url} target="_blank" rel="noreferrer">
-                LinkedIn ↗
-              </a>
-            </div>
+          <div className="about__photo glass">
+            <img src={profileImg} alt="Aswin Rajasekar" width={350} height={500} loading="lazy" />
           </div>
         </Reveal>
       </div>

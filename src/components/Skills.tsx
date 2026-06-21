@@ -63,12 +63,6 @@ export function Skills() {
               The <span className="grad">technologies</span> I build with
             </h2>
           </Reveal>
-          <Reveal delay={0.1}>
-            <p className="section-lead">
-              A living web of frontend, backend and tooling — grab any card and
-              pull; it threads across the whole section, then snaps back home.
-            </p>
-          </Reveal>
         </div>
 
         <div ref={gridRef} className="skills__grid">

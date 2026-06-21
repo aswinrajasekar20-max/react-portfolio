@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Premium custom cursor: a sharp dot + a soft glowing ring that trails with
- * easing. The ring expands over interactive elements ([data-cursor], links,
- * buttons). Over draggable skill cards ([data-cursor="drag"]) it morphs into a
- * unique "drag" cursor — a rotating dashed ring with a grip glyph + DRAG label.
+ * Premium custom cursor — performance-tuned:
+ *   • mousemove only stores coordinates (no DOM work, no layout reads).
+ *   • hover/drag detection runs on `pointerover` and short-circuits unless the
+ *     hovered element actually changed (so closest() isn't called every pixel).
+ *   • all transforms are written once per frame in a single rAF loop using
+ *     translate3d (GPU-composited), and class toggles only fire on state change.
  */
 export function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
@@ -19,35 +21,39 @@ export function CustomCursor() {
     const ring = ringRef.current!;
     const drag = dragRef.current!;
 
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let ringX = mouseX;
-    let ringY = mouseY;
+    let mx = window.innerWidth / 2;
+    let my = window.innerHeight / 2;
+    let dx = mx;
+    let dy = my;
+    let rx = mx;
+    let ry = my;
     let raf = 0;
 
-    const onMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      dot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+    let lastEl: Element | null = null;
+    let overDrag = false;
+    let interactive = false;
 
-      const target = e.target as HTMLElement;
-      const overDrag = !!target.closest('[data-cursor="drag"]');
-      const interactive = target.closest(
-        "a, button, .btn, [data-cursor], input, textarea"
-      );
-
-      drag.classList.toggle("is-on", overDrag);
-      dot.classList.toggle("is-hidden", overDrag);
-      ring.classList.toggle("is-hidden", overDrag);
-      ring.classList.toggle("is-active", !overDrag && !!interactive);
+    const onMove = (e: PointerEvent) => {
+      mx = e.clientX;
+      my = e.clientY;
     };
 
-    const loop = () => {
-      ringX += (mouseX - ringX) * 0.16;
-      ringY += (mouseY - ringY) * 0.16;
-      ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
-      drag.style.transform = `translate(${ringX}px, ${ringY}px)`;
-      raf = requestAnimationFrame(loop);
+    // Only recompute hover state when the pointer enters a different element.
+    const onOver = (e: Event) => {
+      const t = e.target as Element | null;
+      if (t === lastEl) return;
+      lastEl = t;
+      const od = !!t?.closest('[data-cursor="drag"]');
+      const it = !!t?.closest("a, button, .btn, [data-cursor], input, textarea");
+
+      if (od !== overDrag) {
+        overDrag = od;
+        drag.classList.toggle("is-on", od);
+        dot.classList.toggle("is-hidden", od);
+        ring.classList.toggle("is-hidden", od);
+      }
+      if (it !== interactive) interactive = it;
+      ring.classList.toggle("is-active", interactive && !overDrag);
     };
 
     const onDown = () => {
@@ -59,16 +65,29 @@ export function CustomCursor() {
       drag.classList.remove("is-grab");
     };
 
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mousedown", onDown);
-    window.addEventListener("mouseup", onUp);
+    const loop = () => {
+      dx += (mx - dx) * 0.6; // dot — snappy
+      dy += (my - dy) * 0.6;
+      rx += (mx - rx) * 0.18; // ring — trailing
+      ry += (my - ry) * 0.18;
+      dot.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+      drag.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+      raf = requestAnimationFrame(loop);
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: true });
+    document.addEventListener("pointerover", onOver, { passive: true });
+    window.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointerup", onUp);
     raf = requestAnimationFrame(loop);
 
     return () => {
       document.body.classList.remove("custom-cursor");
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mousedown", onDown);
-      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerover", onOver);
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointerup", onUp);
       cancelAnimationFrame(raf);
     };
   }, []);

@@ -57,11 +57,17 @@ export function HeroParticles() {
       }));
     };
 
+    // Cache the canvas rect; recompute on scroll/resize rather than reading
+    // getBoundingClientRect on every mousemove (which forces a reflow).
+    let rect = canvas.getBoundingClientRect();
+    const updateRect = () => {
+      rect = canvas.getBoundingClientRect();
+    };
     const onMove = (e: MouseEvent) => {
-      const r = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - r.left;
-      mouse.y = e.clientY - r.top;
-      mouse.active = e.clientY - r.top >= 0 && e.clientY - r.top <= h;
+      const ly = e.clientY - rect.top;
+      mouse.x = e.clientX - rect.left;
+      mouse.y = ly;
+      mouse.active = ly >= 0 && ly <= h;
     };
     const onLeave = () => {
       mouse.active = false;
@@ -148,8 +154,14 @@ export function HeroParticles() {
     };
 
     build();
-    window.addEventListener("resize", build);
-    window.addEventListener("mousemove", onMove);
+    updateRect();
+    const onResize = () => {
+      build();
+      updateRect();
+    };
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", updateRect, { passive: true });
+    window.addEventListener("mousemove", onMove, { passive: true });
     canvas.addEventListener("mouseleave", onLeave);
 
     // Pause the loop when the hero leaves the viewport — saves CPU/battery.
@@ -171,7 +183,8 @@ export function HeroParticles() {
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener("resize", build);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", updateRect);
       window.removeEventListener("mousemove", onMove);
       canvas.removeEventListener("mouseleave", onLeave);
       io.disconnect();

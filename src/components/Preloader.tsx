@@ -21,10 +21,19 @@ export function Preloader({ onDone }: { onDone: () => void }) {
       setCount(Math.round(eased * 100));
       if (p < 1) raf = requestAnimationFrame(tick);
       else {
-        setTimeout(() => {
+        // Reveal only once webfonts are ready so the cursive swap doesn't cause
+        // a layout shift on visible content (cuts CLS). Cap the wait so a slow
+        // font never stalls the intro.
+        const reveal = () => {
           setOpen(false);
           setTimeout(onDone, 750);
-        }, 140);
+        };
+        const fontsReady = (document as Document & { fonts?: FontFaceSet }).fonts
+          ?.ready;
+        Promise.race([
+          fontsReady ?? Promise.resolve(),
+          new Promise((r) => setTimeout(r, 1500)),
+        ]).then(() => setTimeout(reveal, 100));
       }
     };
     raf = requestAnimationFrame(tick);

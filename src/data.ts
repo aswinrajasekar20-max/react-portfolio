@@ -1,9 +1,12 @@
 // ─────────────────────────────────────────────────────────────────────────
 //  Portfolio content — single source of truth.
-//  Project / achievement visuals use generated glass-gradient placeholders
-//  (see `gradient`). Drop real screenshots into src/assets and swap them in
-//  by importing the file and replacing the `gradient` field with `image`.
+//  Project visuals use real screenshots from src/assets; the `gradient` is kept
+//  as an accent/fallback tint behind each image.
 // ─────────────────────────────────────────────────────────────────────────
+
+import busTicketImg from "./assets/Bus-ticket.webp";
+import ecommerceImg from "./assets/e-commerce.webp";
+import voiceImg from "./assets/voice-commander.webp";
 
 export const defaultConfig = {
   hero_name: "I'm Aswin",
@@ -11,7 +14,7 @@ export const defaultConfig = {
   hero_tagline:
     "Building exceptional digital experiences with modern technologies",
   about_text:
-    "I'm Aswin from Thoothukudi. I completed my schooling in Chennai and am currently pursuing Full Stack Web Development at Freshworks STS Software Academy, where I'm building skills in frontend and backend technologies. I'm passionate about creating scalable and user-friendly web applications.",
+    "I'm Aswin from Thoothukudi, now based in Chennai. After completing my BBA, I went on to finish an intensive Full Stack Web Development course at Freshworks STS Software Academy. Today I work as a Full Stack Developer, building scalable, user-friendly web applications across both frontend and backend.",
   contact_email: "aswinrajasekar20@gmail.com",
   contact_phone: "+91 74189 95677",
   contact_location: "Chennai, India",
@@ -133,6 +136,7 @@ export type Project = {
   live: string;
   gradient: [string, string];
   glyph: string;
+  image: string;
 };
 
 export const projects: Project[] = [
@@ -146,6 +150,7 @@ export const projects: Project[] = [
     live: "https://locotranz-git-main-aswins-projects-7ca69fa9.vercel.app/",
     gradient: ["#38BDF8", "#8B5CF6"],
     glyph: "🚌",
+    image: busTicketImg,
   },
   {
     id: 1,
@@ -157,6 +162,7 @@ export const projects: Project[] = [
     live: "https://e-commerce-gamma-one-spes3qccin.vercel.app/",
     gradient: ["#A855F7", "#22D3EE"],
     glyph: "🛍️",
+    image: ecommerceImg,
   },
   {
     id: 3,
@@ -168,6 +174,7 @@ export const projects: Project[] = [
     live: "https://aswinfreshworks1309-max.github.io/Voice_Commander/",
     gradient: ["#22D3EE", "#38BDF8"],
     glyph: "🔊",
+    image: voiceImg,
   },
 ];
 
@@ -183,13 +190,22 @@ export type Highlight = {
 // Career / education journey, ordered most-recent first for the timeline.
 export const highlightsData: Highlight[] = [
   {
+    title: "Full Stack Developer",
+    description:
+      "Building scalable, user-friendly web applications across frontend and backend with modern technologies.",
+    icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.4 16.6 4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>',
+    color: "#22D3EE",
+    gradient: ["#22D3EE", "#38BDF8"],
+    period: "Present",
+  },
+  {
     title: "Freshworks STS Software Academy",
     description:
-      "Intensive Full Stack Web Development training — mastering frontend and backend engineering on production-grade tooling.",
+      "Completed intensive Full Stack Web Development training — frontend and backend engineering on production-grade tooling.",
     icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3l.71-.71z"/></svg>',
     color: "#38BDF8",
     gradient: ["#38BDF8", "#22D3EE"],
-    period: "Present",
+    period: "Completed",
   },
   {
     title: "Merit — Second Year",
