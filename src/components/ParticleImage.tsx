@@ -23,7 +23,10 @@ export function ParticleImage({ src, alt }: { src: string; alt?: string }) {
     let particles: P[] = [];
     let size = 0;
     let raf = 0;
-    const mouse = { x: -9999, y: -9999 };
+    // pointer in viewport coords; mapped to canvas space each frame using the
+    // live canvas rect (the frame floats/tilts/animates, so a cached rect drifts)
+    const mouse = { vx: -9999, vy: -9999 };
+    let rect = canvas.getBoundingClientRect();
 
     const img = new Image();
 
@@ -72,18 +75,28 @@ export function ParticleImage({ src, alt }: { src: string; alt?: string }) {
     };
 
     const render = () => {
+      // refresh the canvas position each frame (it floats/tilts/animates) and
+      // map the pointer from viewport space into the canvas' internal space so
+      // the scatter "hole" tracks the real cursor exactly.
+      rect = canvas.getBoundingClientRect();
+      const mx =
+        mouse.vx < -9000 ? -9999 : (mouse.vx - rect.left) * (size / rect.width);
+      const my =
+        mouse.vy < -9000 ? -9999 : (mouse.vy - rect.top) * (size / rect.height);
+      const R = 62;
+
       ctx.clearRect(0, 0, size, size);
       for (const p of particles) {
         // spring toward target
         p.vx = (p.vx + (p.tx - p.x) * 0.02) * 0.86;
         p.vy = (p.vy + (p.ty - p.y) * 0.02) * 0.86;
         // scatter away from the cursor
-        const mdx = p.x - mouse.x;
-        const mdy = p.y - mouse.y;
+        const mdx = p.x - mx;
+        const mdy = p.y - my;
         const md2 = mdx * mdx + mdy * mdy;
-        if (md2 < 62 * 62) {
+        if (md2 < R * R) {
           const d = Math.sqrt(md2) || 1;
-          const f = ((62 - d) / 62) * 4.5;
+          const f = ((R - d) / R) * 4.5;
           p.vx += (mdx / d) * f;
           p.vy += (mdy / d) * f;
         }
@@ -121,22 +134,19 @@ export function ParticleImage({ src, alt }: { src: string; alt?: string }) {
     img.src = src;
     if (img.complete && img.naturalWidth) onLoad();
 
-    // Cache the canvas rect; recompute on scroll/resize instead of every move
-    // (reading getBoundingClientRect per mousemove forces a synchronous reflow).
-    let rect = canvas.getBoundingClientRect();
+    // render() refreshes `rect` every frame; updateRect is just for initial build.
     const updateRect = () => {
       rect = canvas.getBoundingClientRect();
     };
     const onMove = (e: MouseEvent) => {
-      mouse.x = (e.clientX - rect.left) * (size / rect.width);
-      mouse.y = (e.clientY - rect.top) * (size / rect.height);
+      mouse.vx = e.clientX;
+      mouse.vy = e.clientY;
     };
     const onLeave = () => {
-      mouse.x = -9999;
-      mouse.y = -9999;
+      mouse.vx = -9999;
+      mouse.vy = -9999;
     };
     window.addEventListener("mousemove", onMove, { passive: true });
-    window.addEventListener("scroll", updateRect, { passive: true });
     window.addEventListener("resize", updateRect);
     canvas.addEventListener("mouseleave", onLeave);
 
@@ -157,7 +167,6 @@ export function ParticleImage({ src, alt }: { src: string; alt?: string }) {
       cancelAnimationFrame(raf);
       img.removeEventListener("load", onLoad);
       window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("scroll", updateRect);
       window.removeEventListener("resize", updateRect);
       canvas.removeEventListener("mouseleave", onLeave);
       io.disconnect();

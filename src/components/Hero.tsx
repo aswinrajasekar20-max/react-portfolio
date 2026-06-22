@@ -77,7 +77,7 @@ export function Hero({ started }: { started: boolean }) {
     const r = el.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width - 0.5;
     const py = (e.clientY - r.top) / r.height - 0.5;
-    el.style.transform = `perspective(1000px) rotateX(${-py * 10}deg) rotateY(${px * 12}deg)`;
+    el.style.transform = `perspective(1200px) rotateX(${-py * 5}deg) rotateY(${px * 6}deg)`;
   };
   const onVisualLeave = () => {
     if (tiltRef.current)
