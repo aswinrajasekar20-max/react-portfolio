@@ -6,7 +6,7 @@
 
 import busTicketImg from "./assets/Bus-ticket.webp";
 import ecommerceImg from "./assets/e-commerce.webp";
-import voiceImg from "./assets/voice-commander.webp";
+import socialImg from "./assets/social-media.png";
 
 export const defaultConfig = {
   hero_name: "I'm Aswin",
@@ -171,15 +171,15 @@ export const projects: Project[] = [
   },
   {
     id: 3,
-    title: "Text to Voice Convertor",
+    title: "ConnectHub — Social Media App",
     description:
-      "An interactive Web Speech experience — type any text and hear it spoken aloud with adjustable voices, built with vanilla JavaScript.",
-    tags: ["HTML", "CSS", "JavaScript"],
-    github: "https://github.com/aswinfreshworks1309-max/Voice_Commander.git",
-    live: "https://aswinfreshworks1309-max.github.io/Voice_Commander/",
-    gradient: ["#22D3EE", "#38BDF8"],
-    glyph: "🔊",
-    image: voiceImg,
+      "A full-stack social platform with a live feed, image posts, real-time messaging over Socket.IO and JWT auth — React + Redux Toolkit on the front, Express and MongoDB behind it.",
+    tags: ["React", "TypeScript", "Express.js", "MongoDB", "Socket.IO"],
+    github: "https://github.com/aswinr3/social_media",
+    live: "https://social-media-client.vercel.app/dashboard",
+    gradient: ["#8B5CF6", "#38BDF8"],
+    glyph: "💬",
+    image: socialImg,
   },
 ];
 
